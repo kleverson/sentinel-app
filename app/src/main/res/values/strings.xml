@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">SentinelApp</string>
+    <string name="label_password">Passwords</string>
+    <string name="password_label_nav">Passwords</string>
+    <string name="generate_label_nav">Generate</string>
+    <string name="settings_label_nav">Settings</string>
+
+    <string name="route_home">Home</string>
+    <string name="route_genene">Generate</string>
+    <string name="route_settings">Settings</string>
+
+    <string name="title_home">Passwords</string>
+    <string name="title_generate">Generate Password</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_new_pass">Password Details</string>
+    <string name="new_pass_label_nav">Password Details</string>
+    <string name="title_size">Size</string>
+    <string name="label_size_password">Size password</string>
+    <string name="title_options">Options</string>
+    <string name="label_include_number">Include numbers</string>
+    <string name="label_include_upper_letter">Include Capital Letters</string>
+    <string name="label_include_lowwercase_letter">Including Lowercase Letters</string>
+    <string name="label_include_special_characters">Include special chars</string>
+    <string name="label_specific_chars">Specific characters</string>
+    <string name="button_generate_password">Generate pass</string>
+    <string name="label_generated_password">Your new password</string>
+    <string name="label_search">Search Pass</string>
+    <string name="toast_password_copied">Password copy!</string>
+</resources>

@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">SentinelApp</string>
+    <string name="label_password">Contraseñas</string>
+    <string name="password_label_nav">Contraseñas</string>
+    <string name="generate_label_nav">Generar</string>
+    <string name="settings_label_nav">Configuraciones</string>
+
+    <string name="route_home">Inicio</string>
+    <string name="route_genene">Generar</string>
+    <string name="route_settings">Ajustes</string>
+
+    <string name="title_home">Contraseñas</string>
+    <string name="title_generate">Generar contraseña</string>
+    <string name="title_settings">Ajustes</string>
+    <string name="title_new_pass">Detalles de la contraseña</string>
+    <string name="new_pass_label_nav">Detalles de la contraseña</string>
+</resources>
