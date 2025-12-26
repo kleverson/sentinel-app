@@ -1,17 +1,41 @@
 <resources>
     <string name="app_name">SentinelApp</string>
+
     <string name="label_password">Contraseñas</string>
     <string name="password_label_nav">Contraseñas</string>
     <string name="generate_label_nav">Generar</string>
-    <string name="settings_label_nav">Configuraciones</string>
+    <string name="settings_label_nav">Configuración</string>
 
     <string name="route_home">Inicio</string>
     <string name="route_genene">Generar</string>
-    <string name="route_settings">Ajustes</string>
+    <string name="route_settings">Configuración</string>
 
     <string name="title_home">Contraseñas</string>
     <string name="title_generate">Generar contraseña</string>
-    <string name="title_settings">Ajustes</string>
+    <string name="title_settings">Configuración</string>
     <string name="title_new_pass">Detalles de la contraseña</string>
     <string name="new_pass_label_nav">Detalles de la contraseña</string>
+
+    <string name="title_size">Tamaño</string>
+    <string name="label_size_password">Tamaño de la contraseña</string>
+
+    <string name="title_options">Opciones</string>
+    <string name="label_include_number">Incluir números</string>
+    <string name="label_include_upper_letter">Incluir letras mayúsculas</string>
+    <string name="label_include_lowwercase_letter">Incluir letras minúsculas</string>
+    <string name="label_include_special_characters">Incluir caracteres especiales</string>
+    <string name="label_specific_chars">Caracteres específicos</string>
+
+    <string name="button_generate_password">Generar contraseña</string>
+    <string name="label_generated_password">Tu nueva contraseña</string>
+    <string name="label_search">Buscar contraseña</string>
+    <string name="toast_password_copied">¡Contraseña copiada!</string>
+
+    <string name="label_provider_name">Nombre del proveedor</string>
+    <string name="label_account_name">Nombre de la cuenta</string>
+    <string name="label_new_password">Contraseña</string>
+
+    <string name="button_edit_password">Editar</string>
+    <string name="button_copy_password">Copiar</string>
+    <string name="btn_exclude">Eliminar</string>
 </resources>

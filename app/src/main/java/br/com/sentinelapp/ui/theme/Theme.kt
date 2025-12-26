@@ -2,6 +2,7 @@ package br.com.sentinelapp.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -71,6 +72,8 @@ fun SentinelAppTheme(
         darkTheme -> DarkColors
         else -> LightColors
     }
+
+    Log.d("COLORS", "colors -> ${colorScheme}")
 
     MaterialTheme(
         colorScheme = colorScheme,

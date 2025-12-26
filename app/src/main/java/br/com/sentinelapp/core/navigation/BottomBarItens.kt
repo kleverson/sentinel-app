@@ -33,9 +33,17 @@ sealed class BottomBarItens(
     )
 
     object NewPass : BottomBarItens(
-        route = "setting_detail",
+        route = "setting_detail?passwordId={passwordId}",
         title = R.string.new_pass_label_nav,
         icon = Icons.Rounded.Add
-    )
+    ) {
+        fun createRoute(passwordId: Int? = null): String {
+            return if (passwordId != null) {
+                "setting_detail?passwordId=$passwordId"
+            } else {
+                "setting_detail"
+            }
+        }
+    }
 
 }

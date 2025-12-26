@@ -26,4 +26,11 @@
     <string name="label_generated_password">Your new password</string>
     <string name="label_search">Search Pass</string>
     <string name="toast_password_copied">Password copy!</string>
+    <string name="label_provider_name">Provider name</string>
+    <string name="label_account_name">Account Name</string>
+    <string name="label_new_password">Password</string>
+    <string name="button_edit_password">Edit</string>
+    <string name="button_copy_password">Copy</string>
+    <string name="btn_exclude">Remove</string>
+    <string name="label_error_loading_passwords">List is empty</string>
 </resources>

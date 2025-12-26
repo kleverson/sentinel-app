@@ -21,7 +21,7 @@ import br.com.sentinelapp.composeable.SentinelNavigationBottomBar
 import br.com.sentinelapp.core.navigation.BottomBarItens
 import br.com.sentinelapp.ui.generate.GenerateScreen
 import br.com.sentinelapp.ui.home.HomeScreen
-import br.com.sentinelapp.ui.settings.NewPassScreen
+import br.com.sentinelapp.ui.newpass.NewPassScreen
 import br.com.sentinelapp.ui.settings.SettingsScreen
 import br.com.sentinelapp.ui.theme.SentinelAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                         Column {
                             HorizontalDivider(
                                 thickness  = 1.dp,
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+                                color = MaterialTheme.colorScheme.background.copy(alpha = 0.2f)
                             )
                             SentinelNavigationBottomBar(navController)
                         }
@@ -55,11 +55,11 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(BottomBarItens.Home.route) {
-                            HomeScreen()
+                            HomeScreen(navController)
                         }
                         composable(BottomBarItens.Generate.route) { GenerateScreen() }
                         composable(BottomBarItens.Settings.route) { SettingsScreen() }
-                        composable(BottomBarItens.NewPass.route) { NewPassScreen() }
+                        composable(BottomBarItens.NewPass.route) { NewPassScreen(navController) }
                     }
                 }
             }

@@ -1,15 +1,41 @@
 <resources>
     <string name="app_name">SentinelApp</string>
+
     <string name="label_password">Senhas</string>
     <string name="password_label_nav">Senhas</string>
     <string name="generate_label_nav">Gerar</string>
     <string name="settings_label_nav">Configurações</string>
-    <string name="route_home">Home</string>
-    <string name="route_genene">Generate</string>
-    <string name="route_settings">Settings</string>
+
+    <string name="route_home">Início</string>
+    <string name="route_genene">Gerar</string>
+    <string name="route_settings">Configurações</string>
+
     <string name="title_home">Senhas</string>
     <string name="title_generate">Gerar senha</string>
     <string name="title_settings">Configurações</string>
     <string name="title_new_pass">Detalhes da senha</string>
     <string name="new_pass_label_nav">Detalhes da senha</string>
+
+    <string name="title_size">Tamanho</string>
+    <string name="label_size_password">Tamanho da senha</string>
+
+    <string name="title_options">Opções</string>
+    <string name="label_include_number">Incluir números</string>
+    <string name="label_include_upper_letter">Incluir letras maiúsculas</string>
+    <string name="label_include_lowwercase_letter">Incluir letras minúsculas</string>
+    <string name="label_include_special_characters">Incluir caracteres especiais</string>
+    <string name="label_specific_chars">Caracteres específicos</string>
+
+    <string name="button_generate_password">Gerar senha</string>
+    <string name="label_generated_password">Sua nova senha</string>
+    <string name="label_search">Buscar senha</string>
+    <string name="toast_password_copied">Senha copiada!</string>
+
+    <string name="label_provider_name">Nome do provedor</string>
+    <string name="label_account_name">Nome da conta</string>
+    <string name="label_new_password">Senha</string>
+
+    <string name="button_edit_password">Editar</string>
+    <string name="button_copy_password">Copiar</string>
+    <string name="btn_exclude">Remover</string>
 </resources>

@@ -30,17 +30,34 @@ android {
         }
     }
 
+    // Packaging options to avoid duplicate native libs for SQLCipher
+    packaging {
+        jniLibs {
+            pickFirsts += listOf("lib/*/libsqlcipher.so")
+        }
+    }
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            // Use Kotlin Gradle plugin's JvmTarget enum
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
+    dependenciesInfo {
+        includeInApk = true
+        includeInBundle = true
+    }
+    buildToolsVersion = "30.0.3"
+    ndkVersion = "28.2.13676358"
 }
 
 dependencies {
@@ -49,6 +66,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    // Compose runtime LiveData interop (observeAsState) — add explicitly to ensure package is available
+    implementation("androidx.compose.runtime:runtime-livedata")
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -62,11 +81,13 @@ dependencies {
     implementation(libs.androidx.compose.ui.text.google.fonts)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.hilt.navigation.compose)
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
 
+    // SQLCipher: use version from version catalog (will resolve AAR automatically)
     implementation(libs.sqlcipher)
     implementation(libs.sqlite)
 
