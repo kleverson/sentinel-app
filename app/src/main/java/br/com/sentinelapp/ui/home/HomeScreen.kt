@@ -59,72 +59,89 @@ fun HomeScreen() {
         AppBarManagerTitle.setTitle(ScreenTitle)
     }
 
-
-    LazyColumn(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 16.dp)) {
-        item {
-            SentinelTextField(
-                value = searchTerm,
-                onValueChange = { searchTerm = it },
-                placeholder = R.string.label_search,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                singleLine = true,
-                leadingIcon = {
-                    IconButton(
-                        onClick = {
-
-                        }
-                    ) {
-                        Icon(Icons.Default.Search, contentDescription = null)
-                    }
-                }
-            )
-        }
-
-        itemsIndexed(listPasswords) { index, item ->
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp).combinedClickable(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
+        SentinelTextField(
+            value = searchTerm,
+            onValueChange = { searchTerm = it },
+            placeholder = R.string.label_search,
+            modifier = Modifier
+                .fillMaxWidth(),
+            singleLine = true,
+            leadingIcon = {
+                IconButton(
                     onClick = {
-                        // Handle item click
-                    },
-                    onLongClick = {
-                        clipboardManager.setText(AnnotatedString(item.password))
-                        Toast.makeText(context, R.string.toast_password_copied, Toast.LENGTH_SHORT).show()
 
-                        // Handle item long click
                     }
-                ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.tertiary)
                 ) {
-                    Icon(
-                        Icons.Default.Key,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .padding(16.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column() {
-                    Text(
-                        text = item.user,
-                        style = MaterialTheme.typography.ListItemTitle,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Text(
-                        text = item.provider,
-                        style = MaterialTheme.typography.ListItemSubTitle,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
+                    Icon(Icons.Default.Search, contentDescription = null)
                 }
             }
-        }
+        )
 
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)
+        ) {
+            item {
+
+            }
+
+            itemsIndexed(listPasswords) { index, item ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                        .combinedClickable(
+                            onClick = {
+                                // Handle item click
+                            },
+                            onLongClick = {
+                                clipboardManager.setText(AnnotatedString(item.password))
+                                Toast.makeText(
+                                    context,
+                                    R.string.toast_password_copied,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                // Handle item long click
+                            }
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.background(MaterialTheme.colorScheme.tertiary)
+                    ) {
+                        Icon(
+                            Icons.Default.Key,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .padding(16.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column() {
+                        Text(
+                            text = item.user,
+                            style = MaterialTheme.typography.ListItemTitle,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Text(
+                            text = item.provider,
+                            style = MaterialTheme.typography.ListItemSubTitle,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            }
+
+        }
     }
+
 
 }
