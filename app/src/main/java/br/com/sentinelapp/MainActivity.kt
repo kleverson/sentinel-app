@@ -24,7 +24,9 @@ import br.com.sentinelapp.ui.home.HomeScreen
 import br.com.sentinelapp.ui.settings.NewPassScreen
 import br.com.sentinelapp.ui.settings.SettingsScreen
 import br.com.sentinelapp.ui.theme.SentinelAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
