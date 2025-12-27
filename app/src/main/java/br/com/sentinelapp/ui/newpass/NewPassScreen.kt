@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,37 +50,42 @@ fun NewPassScreen(
 ) {
     val ScreenTitle = stringResource(R.string.title_new_pass)
 
+    val context = LocalContext.current
+
     val coroutineScope = rememberCoroutineScope()
     var data by remember { mutableStateOf(NewPasswordData()) }
-
-    val passState by newPassViewModel.newpasswordState.observeAsState()
+    val newPasswordCreateState by newPassViewModel.newpasswordState.observeAsState()
+    val currentPasswordState by newPassViewModel.loadedPassword.observeAsState()
+    var isEdit by remember { mutableStateOf(false) }
+    var showAlert by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         AppBarManagerTitle.setTitle(ScreenTitle)
     }
 
-    // Carrega os dados da senha se passwordId foi fornecido (modo edição)
     LaunchedEffect(passwordId) {
+
         passwordId?.toIntOrNull()?.let { id ->
+            isEdit = true
+            Log.d("NEW_PASS_SCREEN", "Password ID: $passwordId")
             newPassViewModel.loadPassword(id)
         }
     }
 
-    // Atualiza os campos quando os dados são carregados
-    LaunchedEffect(newPassViewModel.loadedPassword.value) {
-        Log.d("CURRENT_PASSWORD", "Loaded password: ${newPassViewModel.loadedPassword.value}")
-        newPassViewModel.loadedPassword.value?.let { password ->
+    LaunchedEffect(currentPasswordState) {
+        if (currentPasswordState is CurrentPasswordState.Success) {
+            val item = (currentPasswordState as CurrentPasswordState.Success).passwordEntity
             data = NewPasswordData(
-                accoutName = password.user,
-                providerName = password.provider,
-                password = password.password
+                accoutName = item?.user ?: "",
+                providerName = item?.provider ?: "",
+                password = item?.password ?: ""
             )
         }
     }
 
-    val context = LocalContext.current
 
-    when(passState){
+
+    when(newPasswordCreateState){
         is NewPasswordCreateState.Success -> {
 
             Toast.makeText(context, "Password created successfully", Toast.LENGTH_SHORT).show()
@@ -87,14 +94,11 @@ fun NewPassScreen(
                     inclusive = true
                 }
             }
-            // Handle success state, e.g., show a message or navigate back
         }
         is NewPasswordCreateState.Error -> {
             Toast.makeText(context, "Password created error", Toast.LENGTH_SHORT).show()
-            // Handle error state, e.g., show an error message
         }
         else -> {
-            // Handle other states if necessary
         }
     }
 
@@ -157,7 +161,10 @@ fun NewPassScreen(
                 shape = RoundedCornerShape(4.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.button_edit_password),
+                    text = when(isEdit){
+                        true -> stringResource(R.string.button_save_changes)
+                        false -> stringResource(R.string.button_create_password)
+                    },
                     style = MaterialTheme.typography.buttonText,
                     textAlign = TextAlign.Center
                 )
@@ -182,33 +189,89 @@ fun NewPassScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Button(
-                onClick = {
 
 
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color(0xffffffff)
-                ),
-                shape = RoundedCornerShape(size = 4.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.btn_exclude),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.buttonText,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+        if(isEdit){
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Button(
+                    onClick = {
+                        showAlert = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color(0xffffffff)
+                    ),
+                    shape = RoundedCornerShape(size = 4.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.btn_exclude),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.buttonText,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         }
-
-
     }
 
+    if(showAlert) {
+        ConfirmRemove(
+            title = stringResource(R.string.alert_remove_title),
+            text = stringResource(R.string.alert_remove_text),
+            onConfirm = {
+                coroutineScope.launch {
+                    newPassViewModel.delete(passwordId!!.toInt())
+                    navController.navigate(BottomBarItens.Home.route) {
+                        popUpTo(BottomBarItens.Home.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            },
+            onDismiss = {
+                // Handle the dismissal action
+            }
+        )
+    }
+
+}
+
+
+@Composable
+fun ConfirmRemove(title: String, text: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = {
+            // Called when the user dismisses the dialog (e.g., taps outside or presses back)
+            onDismiss()
+        },
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = text)
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirm()
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    // Handle the dismissal action
+                    onDismiss()
+                }
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 }

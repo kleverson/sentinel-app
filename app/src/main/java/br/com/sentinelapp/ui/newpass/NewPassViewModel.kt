@@ -17,15 +17,30 @@ class NewPassViewModel @Inject constructor(
     private val _newpasswordState= MutableLiveData<NewPasswordCreateState>();
     val newpasswordState: LiveData<NewPasswordCreateState> get() = _newpasswordState
 
-    private val _loadedPassword = MutableLiveData<PasswordEntity?>()
-    val loadedPassword: LiveData<PasswordEntity?> get() = _loadedPassword
+    private val _loadedPassword = MutableLiveData<CurrentPasswordState?>()
+    val loadedPassword: LiveData<CurrentPasswordState?> get() = _loadedPassword
 
     suspend fun loadPassword(passwordId: Int) {
         try {
             val password = repository.getPasswordById(passwordId)
-            _loadedPassword.value = password
+            password.let {
+                if (it == null) {
+                    _loadedPassword.value = CurrentPasswordState.Error
+                    return
+                }else{
+                    _loadedPassword.value = CurrentPasswordState.Success(password)
+                }
+            }
         } catch (e: Exception) {
-            _newpasswordState.value = NewPasswordCreateState.Error("Erro ao carregar senha: ${e.message}")
+            _loadedPassword.value = CurrentPasswordState.Error
+        }
+    }
+
+    suspend fun delete(passwordId: Int){
+        try{
+            repository.removePassword(passwordId)
+        }catch (e: Exception){
+            throw e
         }
     }
 
@@ -50,6 +65,12 @@ class NewPassViewModel @Inject constructor(
         }
 
     }
+}
+
+sealed class CurrentPasswordState{
+    object Loading: CurrentPasswordState()
+    data class Success(val passwordEntity: PasswordEntity?): CurrentPasswordState()
+    object Error: CurrentPasswordState()
 }
 
 sealed class NewPasswordCreateState {

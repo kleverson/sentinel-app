@@ -13,9 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import br.com.sentinelapp.composeable.SentinelAppTopBar
 import br.com.sentinelapp.composeable.SentinelNavigationBottomBar
 import br.com.sentinelapp.core.navigation.BottomBarItens
@@ -54,12 +56,23 @@ class MainActivity : ComponentActivity() {
                         startDestination = BottomBarItens.Home.route,
                         modifier = Modifier.padding(innerPadding)
                     ) {
+
                         composable(BottomBarItens.Home.route) {
-                            HomeScreen(navController)
+                            HomeScreen(
+                                navController =navController,
+                            )
                         }
                         composable(BottomBarItens.Generate.route) { GenerateScreen() }
                         composable(BottomBarItens.Settings.route) { SettingsScreen() }
-                        composable(BottomBarItens.NewPass.route) { NewPassScreen(navController) }
+                        composable(BottomBarItens.NewPass.route, arguments = listOf(
+                            navArgument("passwordId"){
+                                type = NavType.StringType
+                                nullable = true
+                            }
+                        )) { backStackEntry ->
+                            val passwordId = backStackEntry.arguments?.getString("passwordId")
+                            NewPassScreen(navController, passwordId.toString())
+                        }
                     }
                 }
             }
