@@ -225,6 +225,7 @@ fun NewPassScreen(
             onConfirm = {
                 coroutineScope.launch {
                     newPassViewModel.delete(passwordId!!.toInt())
+                    showAlert = false
                     navController.navigate(BottomBarItens.Home.route) {
                         popUpTo(BottomBarItens.Home.route) {
                             inclusive = true
@@ -233,7 +234,7 @@ fun NewPassScreen(
                 }
             },
             onDismiss = {
-                // Handle the dismissal action
+                showAlert = false
             }
         )
     }

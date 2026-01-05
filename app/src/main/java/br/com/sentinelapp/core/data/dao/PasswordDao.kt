@@ -15,7 +15,7 @@ interface PasswordDao {
     @Query("SELECT * FROM passwords WHERE id = :passwordId LIMIT 1")
     suspend fun getPasswordById(passwordId: Int): PasswordEntity?
 
-    @Query("SELECT * FROM passwords WHERE provider LIKE :term or user like :term")
+    @Query("SELECT * FROM passwords WHERE lower(provider) LIKE :term or lower(user) like :term")
     suspend fun getPasswordByTerm(term: String): List<PasswordEntity>
 
     @Query("DELETE FROM passwords WHERE id = :id")

@@ -17,6 +17,8 @@ hilt = "2.51.1"
 room = "2.6.1"
 sqlcipher = "4.5.4"
 hiltNavCompose = "1.0.0"
+biometric = "1.1.0"
+appcompat = "1.7.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +65,9 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 
 sqlcipher = { group = "net.zetetic", name = "android-database-sqlcipher", version.ref = "sqlcipher" }
 sqlite = { group = "androidx.sqlite", name = "sqlite", version = "2.4.0" }
+
+biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 
 

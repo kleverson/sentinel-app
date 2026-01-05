@@ -61,6 +61,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.appcompat)
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -90,6 +91,7 @@ dependencies {
     // SQLCipher: use version from version catalog (will resolve AAR automatically)
     implementation(libs.sqlcipher)
     implementation(libs.sqlite)
+    implementation(libs.biometric)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

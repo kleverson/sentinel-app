@@ -48,7 +48,7 @@ class HomeScreenViewModel  @Inject constructor(
 
     suspend fun searchPassword(term: String){
         try {
-            val passwords = passwordDao.getPasswordByTerm(term)
+            val passwords = passwordDao.getPasswordByTerm("%${term}%")
 
             passwords.let {
                 if (it == null || it.isEmpty()){

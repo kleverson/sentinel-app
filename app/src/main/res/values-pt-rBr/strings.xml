@@ -11,10 +11,10 @@
     <string name="route_settings">Configurações</string>
 
     <string name="title_home">Senhas</string>
-    <string name="title_generate">Gerar senha</string>
+    <string name="title_generate">Gerar Senha</string>
     <string name="title_settings">Configurações</string>
-    <string name="title_new_pass">Detalhes da senha</string>
-    <string name="new_pass_label_nav">Detalhes da senha</string>
+    <string name="title_new_pass">Detalhes da Senha</string>
+    <string name="new_pass_label_nav">Detalhes da Senha</string>
 
     <string name="title_size">Tamanho</string>
     <string name="label_size_password">Tamanho da senha</string>
@@ -29,6 +29,7 @@
     <string name="button_generate_password">Gerar senha</string>
     <string name="label_generated_password">Sua nova senha</string>
     <string name="label_search">Buscar senha</string>
+
     <string name="toast_password_copied">Senha copiada!</string>
 
     <string name="label_provider_name">Nome do provedor</string>
@@ -38,4 +39,41 @@
     <string name="button_edit_password">Editar</string>
     <string name="button_copy_password">Copiar</string>
     <string name="btn_exclude">Remover</string>
+
+    <string name="label_error_loading_passwords">Lista vazia</string>
+
+    <string name="button_save_changes">Salvar</string>
+    <string name="button_create_password">Criar</string>
+
+    <string name="alert_remove_title">Ops</string>
+    <string name="alert_remove_text">Deseja realmente remover?</string>
+
+    <string name="empty_register">Nenhuma senha cadastrada!</string>
+    <string name="add_new_password">Adicionar nova senha</string>
+    <string name="loading">Carregando...</string>
+
+    <string name="title_backup">Backup</string>
+    <string name="title_backup_cloud">Backup na nuvem</string>
+    <string name="backup_description">Faça backup dos seus dados na nuvem.</string>
+
+    <string name="title_about">Sobre</string>
+    <string name="title_about_version">Versão</string>
+
+    <string name="title_term_service">Termos de serviço</string>
+    <string name="title_privacy_policy">Política de privacidade</string>
+    <string name="onboard_title">OnBoard</string>
+    <string name="onboard_welcome">Crie sua senha mestra</string>
+    <string name="pre_description">Esta senha criptografa seu cofre. Nós não a armazenamos e</string>
+    <string name="pre_description_highlight">não podemos recuperá-la</string>
+    <string name="description_for_you">para você.</string>
+    <string name="onboard_your_name">Senha</string>
+    <string name="onboard_password">Senha</string>
+    <string name="confirm_password">Confirmar senha</string>
+    <string name="validation_min_length">O número mínimo de caracteres é %s</string>
+    <string name="validation_uppercase_letter">É necessária uma letra maiúscula</string>
+    <string name="validation_has_number">É necessário um número</string>
+    <string name="special_char">É necessário um caractere especial</string>
+    <string name="onboarding_label_nav">OnBoard</string>
+    <string name="onboard_master_password_created">Sua chave mestra foi definida!</string>
+
 </resources>

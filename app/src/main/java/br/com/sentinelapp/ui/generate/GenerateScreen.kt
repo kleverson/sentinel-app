@@ -2,17 +2,23 @@ package br.com.sentinelapp.ui.generate
 
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -40,6 +47,7 @@ import br.com.sentinelapp.core.manager.AppBarManagerTitle
 import br.com.sentinelapp.core.util.generatePassword
 import br.com.sentinelapp.ui.theme.buttonText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenerateScreen() {
     val ScreenTitle = stringResource(R.string.title_generate)
@@ -92,12 +100,24 @@ fun GenerateScreen() {
                     sliderPosition = it
                 },
                 valueRange = 1f..32f,
-                steps = 31,
+                steps = 0,
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.secondary,
                     activeTrackColor = MaterialTheme.colorScheme.secondary,
                     inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                )
+                ),
+                thumb = {
+                    Box(
+                        modifier = Modifier
+                            .size(22.dp)
+                            .background(Color.White, CircleShape)
+                            .border(
+                                width = 2.dp,
+                                color = Color(0xFF243647),
+                                shape = CircleShape
+                            )
+                    )
+                }
             )
         }
 

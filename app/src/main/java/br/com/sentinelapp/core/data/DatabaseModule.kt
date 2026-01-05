@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import br.com.sentinelapp.core.data.dao.PasswordDao
 import br.com.sentinelapp.core.data.security.KeyStoreManager
+import br.com.sentinelapp.core.data.security.SessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,9 +23,13 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(
         @ApplicationContext context: Context,
-        keyStoreManager: KeyStoreManager
+        keyStoreManager: KeyStoreManager,
+        sessionManager: SessionManager
     ): AppDatabase{
-        val passPhrase = keyStoreManager.getOrCreatePassphrase()
+        // Usa a senha master da sessão para derivar a chave do SQLCipher
+        // Isso permite que o mesmo banco seja aberto em outro dispositivo com a mesma senha
+        val masterPassword = sessionManager.getMasterPassword()
+        val passPhrase = keyStoreManager.deriveSQLCipherKey(masterPassword)
 
         val factory = SupportFactory(passPhrase)
 

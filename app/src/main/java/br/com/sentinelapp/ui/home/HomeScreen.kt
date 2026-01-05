@@ -40,7 +40,11 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import br.com.sentinelapp.core.manager.AppBarManagerTitle
@@ -85,7 +89,7 @@ fun HomeScreen(
     ) {
         SentinelTextField(
             value = searchTerm,
-            onValueChange = { searchTerm = it },
+            onValueChange = { searchTerm = it.lowercase() },
             placeholder = R.string.label_search,
             modifier = Modifier
                 .fillMaxWidth(),
@@ -142,7 +146,6 @@ fun HomeScreen(
                 is PasswordListState.Success -> {
                     val itens = (passwordStates as PasswordListState.Success).data
 
-                    Log.d("HomeScreen", "Passwords loaded: ${itens.size} content=>${itens}")
 
                     if (itens.isEmpty()) {
                         item {
@@ -150,18 +153,16 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(32.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "Nenhuma senha cadastrada",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                                Spacer(modifier = Modifier.padding(8.dp))
-                                Text(
-                                    text = "Adicione uma nova senha usando o botão + na parte inferior",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.secondary
+                                    text = stringResource(R.string.empty_register),
+                                    style = TextStyle(
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                    ),
+                                    color = MaterialTheme.colorScheme.secondary,
                                 )
                             }
                         }
@@ -180,7 +181,7 @@ fun HomeScreen(
                                 .padding(32.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Carregando...")
+                            Text(stringResource(R.string.loading))
                         }
                     }
                 }

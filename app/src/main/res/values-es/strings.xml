@@ -11,10 +11,10 @@
     <string name="route_settings">Configuración</string>
 
     <string name="title_home">Contraseñas</string>
-    <string name="title_generate">Generar contraseña</string>
+    <string name="title_generate">Generar Contraseña</string>
     <string name="title_settings">Configuración</string>
-    <string name="title_new_pass">Detalles de la contraseña</string>
-    <string name="new_pass_label_nav">Detalles de la contraseña</string>
+    <string name="title_new_pass">Detalles de la Contraseña</string>
+    <string name="new_pass_label_nav">Detalles de la Contraseña</string>
 
     <string name="title_size">Tamaño</string>
     <string name="label_size_password">Tamaño de la contraseña</string>
@@ -29,6 +29,7 @@
     <string name="button_generate_password">Generar contraseña</string>
     <string name="label_generated_password">Tu nueva contraseña</string>
     <string name="label_search">Buscar contraseña</string>
+
     <string name="toast_password_copied">¡Contraseña copiada!</string>
 
     <string name="label_provider_name">Nombre del proveedor</string>
@@ -38,4 +39,42 @@
     <string name="button_edit_password">Editar</string>
     <string name="button_copy_password">Copiar</string>
     <string name="btn_exclude">Eliminar</string>
+
+    <string name="label_error_loading_passwords">Lista vacía</string>
+
+    <string name="button_save_changes">Guardar</string>
+    <string name="button_create_password">Crear</string>
+
+    <string name="alert_remove_title">Ups</string>
+    <string name="alert_remove_text">¿Realmente deseas eliminar?</string>
+
+    <string name="empty_register">¡No hay contraseñas registradas!</string>
+    <string name="add_new_password">Agregar nueva contraseña</string>
+    <string name="loading">Cargando...</string>
+
+    <string name="title_backup">Copia de seguridad</string>
+    <string name="title_backup_cloud">Copia de seguridad en la nube</string>
+    <string name="backup_description">Haz una copia de seguridad de tus datos en la nube.</string>
+
+    <string name="title_about">Acerca de</string>
+    <string name="title_about_version">Versión</string>
+
+    <string name="title_term_service">Términos de servicio</string>
+    <string name="title_privacy_policy">Política de privacidad</string>
+    <string name="onboard_title">OnBoard</string>
+    <string name="onboard_welcome">Crea tu contraseña maestra</string>
+    <string name="pre_description">Esta contraseña cifra tu bóveda. No la almacenamos y</string>
+    <string name="pre_description_highlight">no podemos recuperarla</string>
+    <string name="description_for_you">por ti.</string>
+    <string name="onboard_your_name">Contraseña</string>
+    <string name="onboard_password">Contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="validation_min_length">El número mínimo de caracteres es %s</string>
+    <string name="validation_uppercase_letter">Se requiere una letra mayúscula</string>
+    <string name="validation_has_number">Se requiere un número</string>
+    <string name="special_char">Se requiere un carácter especial</string>
+    <string name="onboarding_label_nav">OnBoard</string>
+    <string name="onboard_master_password_created">¡Tu clave maestra ha sido definida!</string>
+
+
 </resources>

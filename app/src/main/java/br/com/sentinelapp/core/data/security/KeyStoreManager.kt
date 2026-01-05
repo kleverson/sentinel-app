@@ -1,127 +1,142 @@
 package br.com.sentinelapp.core.data.security
 
 import android.content.Context
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
 import android.util.Base64
-import java.security.KeyStore
+import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.security.SecureRandom
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
-import dagger.hilt.android.qualifiers.ApplicationContext
-import androidx.core.content.edit
 
 @Singleton
 class KeyStoreManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val alias = "SENTINEL_APP_KEY"
-
     private val prefsName = "sentinel_keystore_prefs"
-    private val prefPassphraseKey = "encrypted_passphrase"
+    private val prefPasswordHashKey = "password_hash"
+    private val prefSaltKey = "password_salt"
 
-    private val ANDROID_KEYSTORE = "AndroidKeyStore"
-    private val AES_MODE = "AES/GCM/NoPadding"
-    private val IV_SIZE = 12 // 96 bits for GCM recommended
-    private val TAG_LENGTH = 128
+    private val ITERATIONS = 120_000
+    private val KEY_LENGTH = 256
 
-    fun getOrCreateKey(): SecretKey {
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-            load(null)
+    private val TAG = "KeyStoreManager"
+
+    /**
+     * Salva a senha master do usuário (armazena apenas um hash para validação futura).
+     * A senha em si será usada para derivar a chave do SQLCipher.
+     */
+    fun setUserPassphrase(masterPassword: String) {
+        val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+
+        Log.d(TAG, "=== START setUserPassphrase ===")
+        Log.d(TAG, "Master password length: ${masterPassword.length}")
+        Log.d(TAG, "Prefs file: $prefsName")
+
+        // Log current state before write
+        val beforeHash = prefs.getString(prefPasswordHashKey, null)
+        val beforeSalt = prefs.getString(prefSaltKey, null)
+        Log.d(TAG, "BEFORE - password_hash exists: ${beforeHash != null}")
+        Log.d(TAG, "BEFORE - password_salt exists: ${beforeSalt != null}")
+
+        // Gera salt único para este dispositivo
+        val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+        Log.d(TAG, "Salt generated (${salt.size} bytes)")
+
+        // Deriva hash da senha para validação futura
+        val passwordHash = deriveKeyFromPassword(masterPassword, salt)
+        Log.d(TAG, "Password hash derived (${passwordHash.size} bytes)")
+
+        val hashEncoded = Base64.encodeToString(passwordHash, Base64.NO_WRAP)
+        val saltEncoded = Base64.encodeToString(salt, Base64.NO_WRAP)
+
+        Log.d(TAG, "Encoded hash length: ${hashEncoded.length} chars")
+        Log.d(TAG, "Encoded salt length: ${saltEncoded.length} chars")
+
+        // Force synchronous commit
+        val editor = prefs.edit()
+        editor.putString(prefPasswordHashKey, hashEncoded)
+        editor.putString(prefSaltKey, saltEncoded)
+
+        Log.d(TAG, "Calling editor.commit()...")
+        val commitResult = editor.commit()
+        Log.d(TAG, "Commit result: $commitResult")
+
+        if (!commitResult) {
+            Log.e(TAG, "SharedPreferences commit() returned false!")
+            throw IllegalStateException("Failed to commit SharedPreferences - commit returned false")
         }
 
-        keyStore.getKey(alias, null)?.let {
-            return it as SecretKey
+        // Verify write immediately after commit
+        val storedHash = prefs.getString(prefPasswordHashKey, null)
+        val storedSalt = prefs.getString(prefSaltKey, null)
+
+        Log.d(TAG, "AFTER - password_hash exists: ${storedHash != null}")
+        Log.d(TAG, "AFTER - password_salt exists: ${storedSalt != null}")
+
+        if (storedHash == null || storedSalt == null) {
+            Log.e(TAG, "Failed to persist password data to SharedPreferences")
+            throw IllegalStateException("Failed to persist password data")
         }
 
-        val generator = KeyGenerator.getInstance(
-            KeyProperties.KEY_ALGORITHM_AES,
-            ANDROID_KEYSTORE
-        )
-
-        generator.init(
-            KeyGenParameterSpec.Builder(
-                alias,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-            )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .build()
-        )
-
-        return generator.generateKey()
+        Log.d(TAG, "Password hash stored (${storedHash.length} chars)")
+        Log.d(TAG, "Salt stored (${storedSalt.length} chars)")
+        Log.d(TAG, "=== END setUserPassphrase SUCCESS ===")
     }
 
     /**
-     * Returns a stable random passphrase (ByteArray) used for SQLCipher.
-     * The passphrase is generated once, encrypted with the AndroidKeyStore key and
-     * stored in SharedPreferences.
-     *
-     * Supported stored formats:
-     * - new: Base64( 1-byte ivLen | iv (ivLen bytes) | ciphertext )
-     * - old: Base64( iv (IV_SIZE bytes) | ciphertext )
+     * Verifica se a senha master fornecida está correta.
      */
-    fun getOrCreatePassphrase(): ByteArray {
+    fun validateMasterPassword(password: String): Boolean {
         val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        prefs.getString(prefPassphraseKey, null)?.let { stored ->
-            try {
-                val combined = Base64.decode(stored, Base64.NO_WRAP)
-                if (combined.size > 0) {
-                    // Try new format first (1-byte ivLen)
-                    if (combined.size > 1) {
-                        val ivLen = combined[0].toInt() and 0xFF
-                        if (ivLen > 0 && combined.size >= 1 + ivLen + 1) {
-                            val iv = combined.copyOfRange(1, 1 + ivLen)
-                            val cipherText = combined.copyOfRange(1 + ivLen, combined.size)
-                            val secretKey = getOrCreateKey()
-                            return decryptWithKey(secretKey, iv, cipherText)
-                        }
-                    }
+        val storedHash = prefs.getString(prefPasswordHashKey, null) ?: return false
+        val storedSalt = prefs.getString(prefSaltKey, null) ?: return false
 
-                    // Fallback to old format: iv (IV_SIZE) + ciphertext
-                    if (combined.size > IV_SIZE) {
-                        val iv = combined.copyOfRange(0, IV_SIZE)
-                        val cipherText = combined.copyOfRange(IV_SIZE, combined.size)
-                        val secretKey = getOrCreateKey()
-                        return decryptWithKey(secretKey, iv, cipherText)
-                    }
-                }
-            } catch (_: Throwable) {
-                // failed to decode/decrypt - we'll fall through and generate a new passphrase
-            }
-        }
+        val salt = Base64.decode(storedSalt, Base64.NO_WRAP)
+        val computedHash = deriveKeyFromPassword(password, salt)
+        val computedHashEncoded = Base64.encodeToString(computedHash, Base64.NO_WRAP)
 
-        // generate new random passphrase
-        val passphrase = ByteArray(32).also { SecureRandom().nextBytes(it) }
-        val secretKey = getOrCreateKey()
-        val (iv, cipherText) = encryptWithKey(secretKey, passphrase)
-        // Store as: 1-byte ivLen | iv | cipherText
-        val combined = ByteArray(1 + iv.size + cipherText.size)
-        combined[0] = iv.size.toByte()
-        System.arraycopy(iv, 0, combined, 1, iv.size)
-        System.arraycopy(cipherText, 0, combined, 1 + iv.size, cipherText.size)
-        val encoded = Base64.encodeToString(combined, Base64.NO_WRAP)
-        prefs.edit { putString(prefPassphraseKey, encoded) }
-        return passphrase
+        return storedHash == computedHashEncoded
     }
 
-    private fun encryptWithKey(key: SecretKey, data: ByteArray): Pair<ByteArray, ByteArray> {
-        val cipher = Cipher.getInstance(AES_MODE)
-        // Let the AndroidKeyStore/provider generate a secure IV for encryption.
-        cipher.init(Cipher.ENCRYPT_MODE, key)
-        val iv = cipher.iv ?: throw IllegalStateException("IV not generated by cipher")
-        val cipherText = cipher.doFinal(data)
-        return iv to cipherText
+    /**
+     * Verifica se a senha master já foi configurada.
+     */
+    fun isMasterPasswordSet(): Boolean {
+        val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+        return prefs.contains(prefPasswordHashKey) && prefs.contains(prefSaltKey)
     }
 
-    private fun decryptWithKey(key: SecretKey, iv: ByteArray, cipherText: ByteArray): ByteArray {
-        val cipher = Cipher.getInstance(AES_MODE)
-        val spec = GCMParameterSpec(TAG_LENGTH, iv)
-        cipher.init(Cipher.DECRYPT_MODE, key, spec)
-        return cipher.doFinal(cipherText)
+    /**
+     * Deriva a chave do SQLCipher a partir da senha master.
+     * Esta é a chave que será usada para criptografar o banco de dados.
+     *
+     * IMPORTANTE: Para recuperação de backup, a mesma senha master sempre
+     * produzirá a mesma chave do SQLCipher (usando um salt fixo).
+     */
+    fun deriveSQLCipherKey(masterPassword: String): ByteArray {
+        // Usa um salt fixo e conhecido para garantir que a mesma senha
+        // sempre gere a mesma chave (necessário para restaurar backups)
+        val fixedSalt = "SentinelApp_SQLCipher_Salt_v1".toByteArray()
+        return deriveKeyFromPassword(masterPassword, fixedSalt)
+    }
+
+    /**
+     * Deriva uma chave AES de 256 bits a partir de uma senha usando PBKDF2.
+     */
+    private fun deriveKeyFromPassword(password: String, salt: ByteArray): ByteArray {
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        val spec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH)
+        return factory.generateSecret(spec).encoded
+    }
+
+    /**
+     * Remove a senha master (para testes ou reset).
+     */
+    fun clearMasterPassword() {
+        val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+        prefs.edit().clear().commit()
+        Log.d(TAG, "Master password cleared")
     }
 }
